@@ -182,6 +182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isMoving: 0
+  direction: 1
 --- !u!114 &114944738997215306
 MonoBehaviour:
   m_ObjectHideFlags: 1

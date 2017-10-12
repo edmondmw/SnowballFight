@@ -6,9 +6,11 @@ public enum Team { green, red };
 
 public class PlayerUnitController : MonoBehaviour {
     // Should have an array of player controlled units
-    public GameObject[] units;
+    public List<GameObject> units = new List<GameObject> ();
     public GameObject snowball;
     public float throwForce;
+    public Material originalMaterial;
+    public Material outlinedMaterial;
 
     Camera cam;
     UnitMotor motor;
@@ -24,6 +26,23 @@ public class PlayerUnitController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         MoveHandler();
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit))
+            {
+                int newIndex = units.IndexOf(hit.transform.gameObject);
+                if (newIndex >= 0)
+                {
+                    units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
+                    units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
+                    motor = units[newIndex].GetComponent<UnitMotor>();
+                    selectedIndex = newIndex;
+                }
+            }
+        }
 	}
 
     void FixedUpdate()
