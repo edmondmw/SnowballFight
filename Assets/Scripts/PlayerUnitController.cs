@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Team { green, red };
+
 public class PlayerUnitController : MonoBehaviour {
     // Should have an array of player controlled units
     public GameObject[] units;
     public GameObject snowball;
+    public float throwForce;
 
     Camera cam;
     UnitMotor motor;
@@ -21,8 +24,12 @@ public class PlayerUnitController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         MoveHandler();
-        AttackHandler();     
 	}
+
+    void FixedUpdate()
+    {
+        AttackHandler();
+    }
 
     void MoveHandler()
     {
@@ -33,7 +40,6 @@ public class PlayerUnitController : MonoBehaviour {
 
             if (Physics.Raycast(ray, out hit, 100))
             {
-                Debug.Log(hit.point);
                 motor.Move(hit.point);
             }
         }
@@ -43,8 +49,12 @@ public class PlayerUnitController : MonoBehaviour {
     {
         if(Input.GetKeyDown(KeyCode.A))
         {
-            GameObject aSnowball = Instantiate(snowball, units[selectedIndex].transform.position, units[selectedIndex].transform.rotation);
-            aSnowball.GetComponent<Rigidbody>().AddForce(units[selectedIndex].transform.forward * 1000f);
+            // Gets the throw position 
+            Vector3 snowballPosition = units[selectedIndex].transform.GetChild(1).transform.position;
+
+            GameObject aSnowball = Instantiate(snowball, snowballPosition, units[selectedIndex].transform.rotation);
+            aSnowball.GetComponent<Rigidbody>().AddForce(units[selectedIndex].transform.forward * throwForce);
+            aSnowball.layer = gameObject.layer;
         }
     }
 }

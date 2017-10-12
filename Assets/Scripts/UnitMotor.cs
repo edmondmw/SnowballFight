@@ -6,9 +6,12 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class UnitMotor : MonoBehaviour {
 
+    public bool isMoving = false;
+    // 1 for green and -1 for red
+    public int direction = 1;
+
     NavMeshAgent nav;
     Vector3 destination;
-    bool isMoving = false;
 
 	// Use this for initialization
 	void Start ()
@@ -19,10 +22,11 @@ public class UnitMotor : MonoBehaviour {
     void Update()
     {
         // When we reach destination, face forward
-        // TODO: Find a better way to determine when finished moving, This won't work for out of bounds clicks
-        if (transform.position.x == destination.x && transform.position.z == destination.z)
-            transform.rotation = new Quaternion(0, 0, 0, 0);
-
+        if (nav.velocity.magnitude == 0 && GetComponent<UnitHealth>().active)
+        {
+            transform.eulerAngles = new Vector3(0, 360 * direction, 0);
+            isMoving = false;
+        }
     }
 
     public void Move(Vector3 point)
@@ -30,5 +34,13 @@ public class UnitMotor : MonoBehaviour {
         isMoving = true;
         nav.SetDestination(point);
         destination = point;
+    }
+
+    public void Attack()
+    {
+       // if(isMoving)
+            //stop moving
+        
+        //generate snowball
     }
 }
