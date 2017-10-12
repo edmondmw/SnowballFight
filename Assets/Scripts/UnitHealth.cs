@@ -7,6 +7,7 @@ public class UnitHealth : MonoBehaviour {
 
     int health = 3;
     public bool active = true;
+    public GameObject healthbar;
 
     NavMeshAgent nav;
     private void Start()
@@ -26,9 +27,17 @@ public class UnitHealth : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-       // Debug.Log(transform.rotation);
+        // Debug.Log(transform.rotation);
         if (collision.gameObject.CompareTag("Snowball"))
+        {
             health--;
+            Vector3 updatedHealthSize = healthbar.transform.localScale;
+            Vector3 updatedHealthPosition = healthbar.transform.position;
+            updatedHealthSize.x -= 0.33f;
+            updatedHealthPosition.x = updatedHealthSize.x/2 - 0.5f;
+            healthbar.transform.localScale = updatedHealthSize;
+            healthbar.transform.position = updatedHealthPosition;
+        }
 
         if (health <= 0)
         {

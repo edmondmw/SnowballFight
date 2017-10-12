@@ -21,28 +21,14 @@ public class PlayerUnitController : MonoBehaviour {
     {
         cam = Camera.main;
         motor = units[selectedIndex].GetComponent<UnitMotor>();
-	}
+        units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
         MoveHandler();
-
-        if(Input.GetMouseButtonDown(0))
-        {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if(Physics.Raycast(ray, out hit))
-            {
-                int newIndex = units.IndexOf(hit.transform.gameObject);
-                if (newIndex >= 0)
-                {
-                    units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
-                    units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
-                    motor = units[newIndex].GetComponent<UnitMotor>();
-                    selectedIndex = newIndex;
-                }
-            }
-        }
+        SelectionHandler();
 	}
 
     void FixedUpdate()
@@ -74,6 +60,29 @@ public class PlayerUnitController : MonoBehaviour {
             GameObject aSnowball = Instantiate(snowball, snowballPosition, units[selectedIndex].transform.rotation);
             aSnowball.GetComponent<Rigidbody>().AddForce(units[selectedIndex].transform.forward * throwForce);
             aSnowball.layer = gameObject.layer;
+        }
+    }
+
+    // When we select a unit, we want to gain control over it and outline it
+    void SelectionHandler()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                int newIndex = units.IndexOf(hit.transform.gameObject);
+                // If the object we clicked is one of our units, then remove outline from previously selected unit, 
+                // outline the new unit, transfer motor control, and updated the selectedIndex
+                if (newIndex >= 0)
+                {
+                    units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
+                    units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
+                    motor = units[newIndex].GetComponent<UnitMotor>();
+                    selectedIndex = newIndex;
+                }
+            }
         }
     }
 }
