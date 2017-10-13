@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class UnitHealth : MonoBehaviour {
-
-    int health = 3;
+    int maxHealth = 3;
+    public int currentHealth = 3;
     public bool active = true;
-    public GameObject healthbar;
+    public GameObject frontHealth;
+    public GameObject backHealth;
 
     private void Start()
     {
@@ -23,6 +24,18 @@ public class UnitHealth : MonoBehaviour {
             temp.x = 90.0f;
             transform.rotation = Quaternion.Euler(temp);
         }
+
+        float healthProportion = (float)currentHealth / maxHealth;
+        Vector3 updatedHealthSize = frontHealth.transform.localScale;
+        Vector3 updatedHealthPosition = frontHealth.transform.localPosition;
+        Vector3 updatedBackHealthPosition = backHealth.transform.localPosition;
+        updatedHealthSize.x = healthProportion;
+        updatedHealthPosition.x = updatedHealthSize.x / 2 - 0.5f;
+        updatedBackHealthPosition.x = 0.5f - updatedHealthSize.x / 2;
+        frontHealth.transform.localScale = updatedHealthSize;
+        frontHealth.transform.localPosition = updatedHealthPosition;
+        backHealth.transform.localScale = updatedHealthSize;
+        backHealth.transform.localPosition = updatedBackHealthPosition;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -30,18 +43,15 @@ public class UnitHealth : MonoBehaviour {
         
         if (collision.gameObject.CompareTag("Snowball"))
         {
-            health--;
-            Vector3 updatedHealthSize = healthbar.transform.localScale;
-            Vector3 updatedHealthPosition = healthbar.transform.position;
-            updatedHealthSize.x -= 0.33f;
-            updatedHealthPosition.x = updatedHealthSize.x/2 - 0.5f;
-            healthbar.transform.localScale = updatedHealthSize;
-            healthbar.transform.position = updatedHealthPosition;
+            currentHealth--;
+            
+
+            if (currentHealth <= 0)
+            {
+                active = false;
+            }
         }
 
-        if (health <= 0)
-        {
-            active = false;
-        }
+        
     }
 }
