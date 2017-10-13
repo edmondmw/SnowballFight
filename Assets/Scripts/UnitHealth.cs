@@ -9,14 +9,14 @@ public class UnitHealth : MonoBehaviour {
     public bool active = true;
     public GameObject healthbar;
 
-    NavMeshAgent nav;
     private void Start()
     {
-        nav = GetComponent<NavMeshAgent>();
-
     }
+
+
     private void Update()
     {
+        // Lay down if dead
         if(!active)
         {
             Vector3 temp = transform.rotation.eulerAngles;
@@ -27,7 +27,7 @@ public class UnitHealth : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Debug.Log(transform.rotation);
+        
         if (collision.gameObject.CompareTag("Snowball"))
         {
             health--;

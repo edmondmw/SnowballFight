@@ -365,8 +365,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e57bcdbeafbb22a42b7f0d4bea6757ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isMoving: 0
   direction: 1
+  snowball: {fileID: 1096863443461366, guid: 3c406f714df487443a1745980e118059, type: 2}
+  throwForce: 3000
 --- !u!114 &114944738997215306
 MonoBehaviour:
   m_ObjectHideFlags: 1

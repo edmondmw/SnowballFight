@@ -8,33 +8,29 @@ public class PlayerUnitController : MonoBehaviour {
     // Should have an array of player controlled units
     public List<GameObject> units = new List<GameObject> ();
     public GameObject snowball;
-    public float throwForce;
     public Material originalMaterial;
     public Material outlinedMaterial;
 
     Camera cam;
-    UnitMotor motor;
+    UnitActions actions;
     int selectedIndex = 0;
     
 	// Use this for initialization
 	void Start ()
     {
         cam = Camera.main;
-        motor = units[selectedIndex].GetComponent<UnitMotor>();
+        actions = units[selectedIndex].GetComponent<UnitActions>();
         units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
 
     }
 	
 	// Update is called once per frame
 	void Update () {
+        AttackHandler();
         MoveHandler();
         SelectionHandler();
 	}
 
-    void FixedUpdate()
-    {
-        AttackHandler();
-    }
 
     void MoveHandler()
     {
@@ -45,7 +41,7 @@ public class PlayerUnitController : MonoBehaviour {
 
             if (Physics.Raycast(ray, out hit, 100))
             {
-                motor.Move(hit.point);
+                actions.Move(hit.point);
             }
         }
     }
@@ -54,12 +50,7 @@ public class PlayerUnitController : MonoBehaviour {
     {
         if(Input.GetKeyDown(KeyCode.A))
         {
-            // Gets the throw position 
-            Vector3 snowballPosition = units[selectedIndex].transform.GetChild(1).transform.position;
-
-            GameObject aSnowball = Instantiate(snowball, snowballPosition, units[selectedIndex].transform.rotation);
-            aSnowball.GetComponent<Rigidbody>().AddForce(units[selectedIndex].transform.forward * throwForce);
-            aSnowball.layer = gameObject.layer;
+            actions.Attack();
         }
     }
 
@@ -79,7 +70,7 @@ public class PlayerUnitController : MonoBehaviour {
                 {
                     units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
                     units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
-                    motor = units[newIndex].GetComponent<UnitMotor>();
+                    actions = units[newIndex].GetComponent<UnitActions>();
                     selectedIndex = newIndex;
                 }
             }
