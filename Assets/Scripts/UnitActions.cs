@@ -21,7 +21,7 @@ public class UnitActions : MonoBehaviour {
 
     void Update()
     {
-        // When we reach destination, face forward
+      /*  // When we reach destination, face forward
         // Check if we've reached the destination
         if (unitHealth.active &&
             !nav.pathPending &&
@@ -29,7 +29,7 @@ public class UnitActions : MonoBehaviour {
             (!nav.hasPath || nav.velocity.sqrMagnitude == 0f))
         {
             StopAndFaceForward();
-        } 
+        } */
     }
 
     public void Move(Vector3 point)
@@ -43,7 +43,7 @@ public class UnitActions : MonoBehaviour {
         if (nav.velocity.magnitude != 0f) 
         {
             nav.enabled = false;
-            StopAndFaceForward();
+            //StopAndFaceForward();
         }
 
         // Gets the throw position 

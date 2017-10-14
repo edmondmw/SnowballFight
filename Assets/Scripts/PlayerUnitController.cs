@@ -10,18 +10,26 @@ public class PlayerUnitController : MonoBehaviour {
     public GameObject snowball;
     public Material originalMaterial;
     public Material outlinedMaterial;
+    public float fireRate;
 
+    LineRenderer aimLine;
     Camera cam;
     UnitActions actions;
+    Transform currentThrowPoint;
     int selectedIndex = 0;
-    
+    bool attackMode = false;
+    float nextFire;
+
+
 	// Use this for initialization
 	void Start ()
     {
         cam = Camera.main;
         actions = units[selectedIndex].GetComponent<UnitActions>();
-        units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
-
+        units[selectedIndex].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
+        // Get the selected unit's throw point's line renderer
+        currentThrowPoint = units[selectedIndex].transform.Find("ThrowPoint");
+        aimLine = currentThrowPoint.GetComponent<LineRenderer>();
     }
 	
 	// Update is called once per frame
@@ -50,7 +58,24 @@ public class PlayerUnitController : MonoBehaviour {
     {
         if(Input.GetKeyDown(KeyCode.A))
         {
-            actions.Attack();
+            attackMode = !attackMode;
+        }
+
+        if (attackMode)
+        {
+            // Draw the line from object position to mouse position
+            aimLine.SetPosition(0, currentThrowPoint.position);
+            aimLine.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            aimLine.enabled = true;
+            if (Input.GetMouseButtonDown(0))
+            {
+                //change object rotation towards mouse cursor
+                actions.Attack();
+            }
+        }
+        else
+        {
+            aimLine.enabled = false;
         }
     }
 
@@ -65,12 +90,14 @@ public class PlayerUnitController : MonoBehaviour {
             {
                 int newIndex = units.IndexOf(hit.transform.gameObject);
                 // If the object we clicked is one of our units, then remove outline from previously selected unit, 
-                // outline the new unit, transfer motor control, and updated the selectedIndex
-                if (newIndex >= 0)
+                // outline the new unit, transfer action control, update aim line, and update the selectedIndex
+                if (newIndex >= 0 && newIndex != selectedIndex)
                 {
                     units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
                     units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
                     actions = units[newIndex].GetComponent<UnitActions>();
+                    aimLine = units[newIndex].transform.GetChild(1).GetComponent<LineRenderer>();
+                    currentThrowPoint = units[newIndex].transform.Find("ThrowPoint");
                     selectedIndex = newIndex;
                 }
             }
