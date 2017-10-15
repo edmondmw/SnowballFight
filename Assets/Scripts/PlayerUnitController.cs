@@ -10,11 +10,12 @@ public class PlayerUnitController : MonoBehaviour {
     public GameObject snowball;
     public Material originalMaterial;
     public Material outlinedMaterial;
-    public float fireRate;
+    public float fireRate = 0.25f;
 
     LineRenderer aimLine;
     Camera cam;
     UnitActions actions;
+    UnitHealth health;
     Transform currentThrowPoint;
     int selectedIndex = 0;
     bool attackMode = false;
@@ -26,16 +27,22 @@ public class PlayerUnitController : MonoBehaviour {
     {
         cam = Camera.main;
         actions = units[selectedIndex].GetComponent<UnitActions>();
-        units[selectedIndex].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
+        health = units[selectedIndex].GetComponent<UnitHealth>();
         // Get the selected unit's throw point's line renderer
         currentThrowPoint = units[selectedIndex].transform.Find("ThrowPoint");
         aimLine = units[selectedIndex].GetComponent<LineRenderer>();
+
+        units[selectedIndex].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
     }
-	
+        
+
 	// Update is called once per frame
 	void Update () {
-        AttackHandler();
-        MoveHandler();
+        if (health.active)
+        {
+            AttackHandler();
+            MoveHandler();
+        }
         SelectionHandler();
 	}
 
@@ -56,7 +63,7 @@ public class PlayerUnitController : MonoBehaviour {
 
     void AttackHandler()
     {
-        if(Input.GetKeyDown(KeyCode.A))
+        if(Input.GetKeyDown(KeyCode.A) && Time.time >= nextFire)
         {
             attackMode = !attackMode;
         }
@@ -78,6 +85,7 @@ public class PlayerUnitController : MonoBehaviour {
             {
                 actions.Attack(hit.point);
                 attackMode = false;
+                nextFire = Time.time + fireRate;
             }
         }
         else
@@ -96,13 +104,15 @@ public class PlayerUnitController : MonoBehaviour {
             if (Physics.Raycast(ray, out hit))
             {
                 int newIndex = units.IndexOf(hit.transform.gameObject);
-                // If the object we clicked is one of our units, then remove outline from previously selected unit, 
-                // outline the new unit, transfer action control, update aim line, and update the selectedIndex
-                if (newIndex >= 0 && newIndex != selectedIndex)
+               
+                // Update member variables to the newly selected unit
+                if (newIndex >= 0 && newIndex != selectedIndex && units[newIndex].GetComponent<UnitHealth>().active)
                 {
+                    // Change outlined unit
                     units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
                     units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
                     actions = units[newIndex].GetComponent<UnitActions>();
+                    health = units[newIndex].GetComponent<UnitHealth>();
                     currentThrowPoint = units[newIndex].transform.Find("ThrowPoint");
                     aimLine.enabled = false;
                     aimLine = units[newIndex].GetComponent<LineRenderer>();

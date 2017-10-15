@@ -25,17 +25,7 @@ public class UnitHealth : MonoBehaviour {
             transform.rotation = Quaternion.Euler(temp);
         }
 
-        float healthProportion = (float)currentHealth / maxHealth;
-        Vector3 updatedHealthSize = frontHealth.transform.localScale;
-        Vector3 updatedHealthPosition = frontHealth.transform.localPosition;
-        Vector3 updatedBackHealthPosition = backHealth.transform.localPosition;
-        updatedHealthSize.x = healthProportion;
-        updatedHealthPosition.x = updatedHealthSize.x / 2 - 0.5f;
-        updatedBackHealthPosition.x = 0.5f - updatedHealthSize.x / 2;
-        frontHealth.transform.localScale = updatedHealthSize;
-        frontHealth.transform.localPosition = updatedHealthPosition;
-        backHealth.transform.localScale = updatedHealthSize;
-        backHealth.transform.localPosition = updatedBackHealthPosition;
+        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -43,8 +33,21 @@ public class UnitHealth : MonoBehaviour {
         
         if (collision.gameObject.CompareTag("Snowball"))
         {
-            currentHealth--;
-            
+            if (currentHealth > 0)
+            {
+                currentHealth--;
+                float healthProportion = (float)currentHealth / maxHealth;
+                Vector3 updatedHealthSize = frontHealth.transform.localScale;
+                Vector3 updatedHealthPosition = frontHealth.transform.localPosition;
+                Vector3 updatedBackHealthPosition = backHealth.transform.localPosition;
+                updatedHealthSize.x = healthProportion;
+                updatedHealthPosition.x = updatedHealthSize.x / 2 - 0.5f;
+                updatedBackHealthPosition.x = 0.5f - updatedHealthSize.x / 2;
+                frontHealth.transform.localScale = updatedHealthSize;
+                frontHealth.transform.localPosition = updatedHealthPosition;
+                backHealth.transform.localScale = updatedHealthSize;
+                backHealth.transform.localPosition = updatedBackHealthPosition;
+            }
 
             if (currentHealth <= 0)
             {

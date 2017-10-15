@@ -720,7 +720,7 @@ MonoBehaviour:
   snowball: {fileID: 1096863443461366, guid: 3c406f714df487443a1745980e118059, type: 2}
   originalMaterial: {fileID: 2100000, guid: 72ee897afec088d439240d75bfcbb206, type: 2}
   outlinedMaterial: {fileID: 2100000, guid: 647cc195bdef8034c8fc7c64302c37e5, type: 2}
-  fireRate: 0
+  fireRate: 0.25
 --- !u!4 &2089850035
 Transform:
   m_ObjectHideFlags: 0
