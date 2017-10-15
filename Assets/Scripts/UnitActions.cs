@@ -37,7 +37,7 @@ public class UnitActions : MonoBehaviour {
         nav.SetDestination(point);
     }
 
-    public void Attack()
+    public void Attack(Vector3 direction)
     {
         // If moving then stop
         if (nav.velocity.magnitude != 0f) 
@@ -46,12 +46,17 @@ public class UnitActions : MonoBehaviour {
             //StopAndFaceForward();
         }
 
+        // Rotate the unit to face the direction.
+        Vector3 lookDirection = (direction - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
+        transform.rotation = lookRotation;
+
         // Gets the throw position 
-        Vector3 snowballPosition = transform.GetChild(1).transform.position;
+        Vector3 snowballPosition = transform.Find("ThrowPoint").transform.position;
         // Throw a snowball
         GameObject aSnowball = Instantiate(snowball, snowballPosition, transform.rotation);
-        aSnowball.GetComponent<Rigidbody>().AddForce(transform.forward * throwForce);
         aSnowball.layer = gameObject.layer;
+        aSnowball.GetComponent<Rigidbody>().AddForce(transform.forward * throwForce);    
         nav.enabled = true;
     }
 

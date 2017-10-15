@@ -21,15 +21,15 @@ public class PlayerUnitController : MonoBehaviour {
     float nextFire;
 
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
         cam = Camera.main;
         actions = units[selectedIndex].GetComponent<UnitActions>();
         units[selectedIndex].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
         // Get the selected unit's throw point's line renderer
         currentThrowPoint = units[selectedIndex].transform.Find("ThrowPoint");
-        aimLine = currentThrowPoint.GetComponent<LineRenderer>();
+        aimLine = units[selectedIndex].GetComponent<LineRenderer>();
     }
 	
 	// Update is called once per frame
@@ -63,14 +63,21 @@ public class PlayerUnitController : MonoBehaviour {
 
         if (attackMode)
         {
-            // Draw the line from object position to mouse position
+            // In Unity, mouse position is measured in x and y, with a z of 0. Since this is an isometric game, in order to get the x and z coordinates
+            // of the mouse cursor, you need to use a raycast from the cursor to the ground. The collision point is the (x,z) coordinate of your mouse.
             aimLine.SetPosition(0, currentThrowPoint.position);
-            aimLine.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            aimLine.enabled = true;
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit))
+            {
+                aimLine.SetPosition(1, hit.point);
+                aimLine.enabled = true;
+            }
+            
             if (Input.GetMouseButtonDown(0))
             {
-                //change object rotation towards mouse cursor
-                actions.Attack();
+                actions.Attack(hit.point);
+                attackMode = false;
             }
         }
         else
@@ -96,8 +103,9 @@ public class PlayerUnitController : MonoBehaviour {
                     units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
                     units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
                     actions = units[newIndex].GetComponent<UnitActions>();
-                    aimLine = units[newIndex].transform.GetChild(1).GetComponent<LineRenderer>();
                     currentThrowPoint = units[newIndex].transform.Find("ThrowPoint");
+                    aimLine.enabled = false;
+                    aimLine = units[newIndex].GetComponent<LineRenderer>();
                     selectedIndex = newIndex;
                 }
             }
