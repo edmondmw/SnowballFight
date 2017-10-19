@@ -676,9 +676,9 @@ Prefab:
       value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 65347599827157054, guid: 5e2d0d9f850851941b13eb98b0135362, type: 2}
-    - {fileID: 65220632984644764, guid: 5e2d0d9f850851941b13eb98b0135362, type: 2}
-    - {fileID: 65904508336766078, guid: 5e2d0d9f850851941b13eb98b0135362, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 5e2d0d9f850851941b13eb98b0135362, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &2023188477 stripped

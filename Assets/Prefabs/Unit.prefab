@@ -56,7 +56,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4510970215600356}
   - component: {fileID: 33716510770769100}
-  - component: {fileID: 65347599827157054}
   - component: {fileID: 23604494033030970}
   m_Layer: 8
   m_Name: Health
@@ -74,7 +73,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4302850930851758}
   - component: {fileID: 33074072295330990}
-  - component: {fileID: 65220632984644764}
   - component: {fileID: 23980122961756482}
   m_Layer: 8
   m_Name: HealthBack
@@ -92,7 +90,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4251763709346574}
   - component: {fileID: 33273249023347352}
-  - component: {fileID: 65904508336766078}
   - component: {fileID: 23009459079830260}
   m_Layer: 8
   m_Name: Damage
@@ -401,30 +398,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &65220632984644764
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1671069397042208}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &65347599827157054
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1283478932363184}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &65547523070428036
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -437,18 +410,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 1, z: 0}
---- !u!65 &65904508336766078
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1767844578699198}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114134763788584166
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -515,7 +476,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 0.25
+    widthMultiplier: 0.5
     widthCurve:
       serializedVersion: 2
       m_Curve:

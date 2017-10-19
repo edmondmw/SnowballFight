@@ -16,7 +16,6 @@ public class PlayerUnitController : MonoBehaviour {
     Camera cam;
     UnitActions actions;
     UnitHealth health;
-    Transform currentThrowPoint;
     int selectedIndex = 0;
     bool attackMode = false;
     float nextFire;
@@ -29,7 +28,6 @@ public class PlayerUnitController : MonoBehaviour {
         actions = units[selectedIndex].GetComponent<UnitActions>();
         health = units[selectedIndex].GetComponent<UnitHealth>();
         // Get the selected unit's throw point's line renderer
-        currentThrowPoint = units[selectedIndex].transform.Find("ThrowPoint");
         aimLine = units[selectedIndex].GetComponent<LineRenderer>();
 
         units[selectedIndex].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
@@ -72,7 +70,7 @@ public class PlayerUnitController : MonoBehaviour {
         {
             // In Unity, mouse position is measured in x and y, with a z of 0. Since this is an isometric game, in order to get the x and z coordinates
             // of the mouse cursor, you need to use a raycast from the cursor to the ground. The collision point is the (x,z) coordinate of your mouse.
-            aimLine.SetPosition(0, currentThrowPoint.position);
+            aimLine.SetPosition(0, units[selectedIndex].transform.position);
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit))
@@ -114,7 +112,6 @@ public class PlayerUnitController : MonoBehaviour {
                     units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
                     actions = units[newIndex].GetComponent<UnitActions>();
                     health = units[newIndex].GetComponent<UnitHealth>();
-                    currentThrowPoint = units[newIndex].transform.Find("ThrowPoint");
                     aimLine.enabled = false;
                     aimLine = units[newIndex].GetComponent<LineRenderer>();
                     // When switching units should be able to fire immediately
