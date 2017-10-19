@@ -10,24 +10,37 @@ public class PlayerUnitController : MonoBehaviour {
     public GameObject snowball;
     public Material originalMaterial;
     public Material outlinedMaterial;
+    public float fireRate = 0.25f;
 
+    LineRenderer aimLine;
     Camera cam;
     UnitActions actions;
+    UnitHealth health;
     int selectedIndex = 0;
-    
-	// Use this for initialization
-	void Start ()
+    bool attackMode = false;
+    float nextFire;
+
+
+    // Use this for initialization
+    void Start()
     {
         cam = Camera.main;
         actions = units[selectedIndex].GetComponent<UnitActions>();
-        units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
+        health = units[selectedIndex].GetComponent<UnitHealth>();
+        // Get the selected unit's throw point's line renderer
+        aimLine = units[selectedIndex].GetComponent<LineRenderer>();
 
+        units[selectedIndex].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
     }
-	
+        
+
 	// Update is called once per frame
 	void Update () {
-        AttackHandler();
-        MoveHandler();
+        if (health.active)
+        {
+            AttackHandler();
+            MoveHandler();
+        }
         SelectionHandler();
 	}
 
@@ -48,9 +61,34 @@ public class PlayerUnitController : MonoBehaviour {
 
     void AttackHandler()
     {
-        if(Input.GetKeyDown(KeyCode.A))
+        if(Input.GetKeyDown(KeyCode.A) && Time.time >= nextFire)
         {
-            actions.Attack();
+            attackMode = !attackMode;
+        }
+
+        if (attackMode)
+        {
+            // In Unity, mouse position is measured in x and y, with a z of 0. Since this is an isometric game, in order to get the x and z coordinates
+            // of the mouse cursor, you need to use a raycast from the cursor to the ground. The collision point is the (x,z) coordinate of your mouse.
+            aimLine.SetPosition(0, units[selectedIndex].transform.position);
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit))
+            {
+                aimLine.SetPosition(1, hit.point);
+                aimLine.enabled = true;
+            }
+            
+            if (Input.GetMouseButtonDown(0))
+            {
+                actions.Attack(hit.point);
+                attackMode = false;
+                nextFire = Time.time + fireRate;
+            }
+        }
+        else
+        {
+            aimLine.enabled = false;
         }
     }
 
@@ -64,13 +102,20 @@ public class PlayerUnitController : MonoBehaviour {
             if (Physics.Raycast(ray, out hit))
             {
                 int newIndex = units.IndexOf(hit.transform.gameObject);
-                // If the object we clicked is one of our units, then remove outline from previously selected unit, 
-                // outline the new unit, transfer motor control, and updated the selectedIndex
-                if (newIndex >= 0)
+               
+                // Update member variables to the newly selected unit
+                if (newIndex >= 0 && newIndex != selectedIndex && units[newIndex].GetComponent<UnitHealth>().active)
                 {
+                    // Change outlined unit
+                    attackMode = false;
                     units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
                     units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
                     actions = units[newIndex].GetComponent<UnitActions>();
+                    health = units[newIndex].GetComponent<UnitHealth>();
+                    aimLine.enabled = false;
+                    aimLine = units[newIndex].GetComponent<LineRenderer>();
+                    // When switching units should be able to fire immediately
+                    nextFire = Time.time;
                     selectedIndex = newIndex;
                 }
             }

@@ -11,25 +11,16 @@ public class UnitActions : MonoBehaviour {
     public float throwForce;
 
     NavMeshAgent nav;
-    UnitHealth unitHealth;
+
 	// Use this for initialization
 	void Start ()
     {
         nav = GetComponent<NavMeshAgent>();
-        unitHealth = GetComponent<UnitHealth>();
 	}
 
     void Update()
     {
-        // When we reach destination, face forward
-        // Check if we've reached the destination
-        if (unitHealth.active &&
-            !nav.pathPending &&
-            nav.remainingDistance <= nav.stoppingDistance &&
-            (!nav.hasPath || nav.velocity.sqrMagnitude == 0f))
-        {
-            StopAndFaceForward();
-        } 
+      
     }
 
     public void Move(Vector3 point)
@@ -37,21 +28,26 @@ public class UnitActions : MonoBehaviour {
         nav.SetDestination(point);
     }
 
-    public void Attack()
+    public void Attack(Vector3 direction)
     {
         // If moving then stop
         if (nav.velocity.magnitude != 0f) 
         {
             nav.enabled = false;
-            StopAndFaceForward();
+            //StopAndFaceForward();
         }
 
+        // Rotate the unit to face the direction.
+        Vector3 lookDirection = (direction - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
+        transform.rotation = lookRotation;
+
         // Gets the throw position 
-        Vector3 snowballPosition = transform.GetChild(1).transform.position;
+        Vector3 snowballPosition = transform.Find("ThrowPoint").transform.position;
         // Throw a snowball
         GameObject aSnowball = Instantiate(snowball, snowballPosition, transform.rotation);
-        aSnowball.GetComponent<Rigidbody>().AddForce(transform.forward * throwForce);
         aSnowball.layer = gameObject.layer;
+        aSnowball.GetComponent<Rigidbody>().AddForce(transform.forward * throwForce);    
         nav.enabled = true;
     }
 
