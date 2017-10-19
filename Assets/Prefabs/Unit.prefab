@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 33716510770769100}
   - component: {fileID: 65347599827157054}
   - component: {fileID: 23604494033030970}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 33074072295330990}
   - component: {fileID: 65220632984644764}
   - component: {fileID: 23980122961756482}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HealthBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 33273249023347352}
   - component: {fileID: 65904508336766078}
   - component: {fileID: 23009459079830260}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Damage
   m_TagString: Untagged
   m_Icon: {fileID: 0}

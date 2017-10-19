@@ -109,6 +109,7 @@ public class PlayerUnitController : MonoBehaviour {
                 if (newIndex >= 0 && newIndex != selectedIndex && units[newIndex].GetComponent<UnitHealth>().active)
                 {
                     // Change outlined unit
+                    attackMode = false;
                     units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
                     units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
                     actions = units[newIndex].GetComponent<UnitActions>();
@@ -116,6 +117,8 @@ public class PlayerUnitController : MonoBehaviour {
                     currentThrowPoint = units[newIndex].transform.Find("ThrowPoint");
                     aimLine.enabled = false;
                     aimLine = units[newIndex].GetComponent<LineRenderer>();
+                    // When switching units should be able to fire immediately
+                    nextFire = Time.time;
                     selectedIndex = newIndex;
                 }
             }

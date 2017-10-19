@@ -33,6 +33,10 @@ public class UnitHealth : MonoBehaviour {
         
         if (collision.gameObject.CompareTag("Snowball"))
         {
+            if(gameObject.layer == collision.gameObject.layer)
+            {
+                return;
+            }
             if (currentHealth > 0)
             {
                 currentHealth--;
