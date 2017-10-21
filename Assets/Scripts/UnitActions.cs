@@ -13,7 +13,7 @@ public class UnitActions : MonoBehaviour {
     NavMeshAgent nav;
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
         nav = GetComponent<NavMeshAgent>();
 	}
@@ -34,7 +34,6 @@ public class UnitActions : MonoBehaviour {
         if (nav.velocity.magnitude != 0f) 
         {
             nav.enabled = false;
-            //StopAndFaceForward();
         }
 
         // Rotate the unit to face the direction.
@@ -50,10 +49,4 @@ public class UnitActions : MonoBehaviour {
         aSnowball.GetComponent<Rigidbody>().AddForce(transform.forward * throwForce);    
         nav.enabled = true;
     }
-
-    void StopAndFaceForward()
-    {
-        transform.eulerAngles = new Vector3(0, 360 * direction, 0);
-    }
-
 }

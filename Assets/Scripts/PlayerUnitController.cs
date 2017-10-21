@@ -20,9 +20,7 @@ public class PlayerUnitController : MonoBehaviour {
     bool attackMode = false;
     float nextFire;
 
-
-    // Use this for initialization
-    void Start()
+    private void Awake()
     {
         cam = Camera.main;
         actions = units[selectedIndex].GetComponent<UnitActions>();
@@ -32,10 +30,16 @@ public class PlayerUnitController : MonoBehaviour {
 
         units[selectedIndex].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
     }
+
+    // Use this for initialization
+    void Start()
+    {
+    }
         
 
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
         if (health.active)
         {
             AttackHandler();
