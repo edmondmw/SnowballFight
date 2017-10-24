@@ -77,7 +77,7 @@ public class PlayerUnitController : MonoBehaviour {
             aimLine.SetPosition(0, units[selectedIndex].transform.position);
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if(Physics.Raycast(ray, out hit))
+            if(Physics.Raycast(ray, out hit, LayerMask.GetMask("Ground")))
             {
                 aimLine.SetPosition(1, hit.point);
                 aimLine.enabled = true;

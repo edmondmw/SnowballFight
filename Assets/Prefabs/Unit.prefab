@@ -423,7 +423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: 1
   snowball: {fileID: 1096863443461366, guid: 3c406f714df487443a1745980e118059, type: 2}
-  throwForce: 3000
+  throwForce: 2000
 --- !u!114 &114944738997215306
 MonoBehaviour:
   m_ObjectHideFlags: 1

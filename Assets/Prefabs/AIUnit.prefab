@@ -59,6 +59,7 @@ GameObject:
   - component: {fileID: 114739625464885668}
   - component: {fileID: 114188930725801334}
   - component: {fileID: 114663123242298432}
+  - component: {fileID: 65714733910851268}
   m_Layer: 9
   m_Name: AIUnit
   m_TagString: Untagged
@@ -192,7 +193,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1201213000466332}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 12.81}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4758212644855930}
@@ -410,6 +411,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!65 &65714733910851268
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1201213000466332}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 20, y: 2, z: 20}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &114188930725801334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -431,13 +444,17 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1201213000466332}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 381462a7a495efd479f48c28a1d2dddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: 0
-  playerUnits: []
+  currentState: 2
+  playerUnits:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  fireRate: 1
 --- !u!114 &114739625464885668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -451,7 +468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: 1
   snowball: {fileID: 1096863443461366, guid: 3c406f714df487443a1745980e118059, type: 2}
-  throwForce: 3000
+  throwForce: 2000
 --- !u!195 &195690406751220194
 NavMeshAgent:
   m_ObjectHideFlags: 1

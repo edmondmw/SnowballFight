@@ -24,8 +24,6 @@ public class UnitHealth : MonoBehaviour {
             temp.x = 90.0f;
             transform.rotation = Quaternion.Euler(temp);
         }
-
-        
     }
 
     private void OnCollisionEnter(Collision collision)
