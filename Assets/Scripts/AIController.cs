@@ -5,21 +5,29 @@ using UnityEngine.AI;
 
 public class AIController : MonoBehaviour {
     public enum State {Move, Avoid, Attack};
-    public State currentState = State.Attack;
-    public GameObject[] playerUnits;
+    public State currentState;
+    
     public float fireRate;
 
     Transform projectile;
     UnitActions actions;
     UnitHealth health;
+    List<GameObject> playerUnits;
     float nextFire;
 
     private void Awake()
     {
         actions = GetComponent<UnitActions>();
         health = GetComponent<UnitHealth>();
-        nextFire = Time.time + 10f;
-        //GameObject.FindGameObjectWithTag("Player").transform.
+        nextFire = Time.time + fireRate + Random.Range(0.25f, 2f);
+        playerUnits = new List<GameObject>();
+
+        Transform playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        int count = playerTransform.childCount;
+        for(int i = 0; i < count; ++i)
+        {
+            playerUnits.Add(playerTransform.GetChild(i).gameObject);
+        }
     }
 
     // Use this for initialization
@@ -31,7 +39,7 @@ public class AIController : MonoBehaviour {
     IEnumerator Move()
     {
         Vector3 point = RandomPointOnNavMesh();
-        float waitTime = 2f;
+        float waitTime = 3f;
         float elapsedTime = 0f;
 
         // Move to a random location
@@ -68,9 +76,17 @@ public class AIController : MonoBehaviour {
     {
         while (currentState == State.Attack)
         {
-            nextFire = Time.time + fireRate + Random.Range(0, 0.5f);
+            nextFire = Time.time + fireRate + Random.Range(0, 1f);
+
+            int randIndex = Random.Range(0, playerUnits.Count);
+            while (!playerUnits[randIndex].GetComponent<UnitHealth>().active)
+            {
+                playerUnits.Remove(playerUnits[randIndex]);
+                randIndex = Random.Range(0, playerUnits.Count);
+            }
+
             // could add a bit of randomness depending on difficulty
-            actions.Attack(playerUnits[Random.Range(0, playerUnits.Length)].transform.position);
+            actions.Attack(playerUnits[randIndex].transform.position);
 
             if (Time.time < nextFire)
             {

@@ -31,6 +31,7 @@ public class UnitHealth : MonoBehaviour {
         
         if (collision.gameObject.CompareTag("Snowball"))
         {
+            Destroy(collision.gameObject);
 
             if (currentHealth > 0)
             {
@@ -51,7 +52,7 @@ public class UnitHealth : MonoBehaviour {
             if (currentHealth <= 0)
             {
                 active = false;
-            }
+            }    
         }
 
         
