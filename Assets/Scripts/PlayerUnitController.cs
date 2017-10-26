@@ -18,7 +18,9 @@ public class PlayerUnitController : MonoBehaviour {
     UnitHealth health;
     int selectedIndex = 0;
     bool attackMode = false;
+    bool isSelecting = false;
     float nextFire;
+    Vector3 mousePosition;
 
     private void Awake()
     {
@@ -30,12 +32,6 @@ public class PlayerUnitController : MonoBehaviour {
 
         units[selectedIndex].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
     }
-
-    // Use this for initialization
-    void Start()
-    {
-    }
-        
 
 	// Update is called once per frame
 	void Update ()
@@ -99,7 +95,7 @@ public class PlayerUnitController : MonoBehaviour {
     // When we select a unit, we want to gain control over it and outline it
     void SelectionHandler()
     {
-        if (Input.GetMouseButtonDown(0))
+     /*   if (Input.GetMouseButtonDown(0))
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -123,6 +119,27 @@ public class PlayerUnitController : MonoBehaviour {
                     selectedIndex = newIndex;
                 }
             }
+        }
+        */
+        // If we press the left mouse button, save mouse location and begin selection
+        if (Input.GetMouseButtonDown(0))
+        {
+            isSelecting = true;
+            mousePosition = Input.mousePosition;
+        }
+        // If we let go of the left mouse button, end selection
+        if (Input.GetMouseButtonUp(0))
+            isSelecting = false;
+    }
+
+    private void OnGUI()
+    {
+        if (isSelecting)
+        {
+            // Create a rect from both mouse positions
+            var rect = Rectangle.GetScreenRect(mousePosition, Input.mousePosition);
+            Rectangle.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
+            Rectangle.DrawScreenRectBorder(rect, 2, Color.green);
         }
     }
 }
