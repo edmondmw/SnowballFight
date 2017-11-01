@@ -132,6 +132,7 @@ public class PlayerUnitController : MonoBehaviour {
             isSelecting = false;
     }
 
+    // For handling GUI events. May be called several times a frame
     private void OnGUI()
     {
         if (isSelecting)

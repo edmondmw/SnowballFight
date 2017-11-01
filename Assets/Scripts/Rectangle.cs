@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Created by Jeff Zimmer from http://hyunkell.com/blog/rts-style-unit-selection-in-unity-5/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
