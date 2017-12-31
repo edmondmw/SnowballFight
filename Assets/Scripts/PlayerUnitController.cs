@@ -20,7 +20,7 @@ public class PlayerUnitController : MonoBehaviour {
     bool attackMode = false;
     bool isSelecting = false;
     float nextFire;
-    Vector3 mousePosition;
+    Vector3 startMousePosition;
 
     private void Awake()
     {
@@ -95,14 +95,19 @@ public class PlayerUnitController : MonoBehaviour {
     // When we select a unit, we want to gain control over it and outline it
     void SelectionHandler()
     {
-     /*   if (Input.GetMouseButtonDown(0))
+     
+        // If we press the left mouse button, save mouse location and begin selection
+        if (Input.GetMouseButtonDown(0))
         {
+            isSelecting = true;
+            startMousePosition = Input.mousePosition;
+
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
                 int newIndex = units.IndexOf(hit.transform.gameObject);
-               
+
                 // Update member variables to the newly selected unit
                 if (newIndex >= 0 && newIndex != selectedIndex && units[newIndex].GetComponent<UnitHealth>().active)
                 {
@@ -120,16 +125,37 @@ public class PlayerUnitController : MonoBehaviour {
                 }
             }
         }
-        */
-        // If we press the left mouse button, save mouse location and begin selection
-        if (Input.GetMouseButtonDown(0))
-        {
-            isSelecting = true;
-            mousePosition = Input.mousePosition;
-        }
         // If we let go of the left mouse button, end selection
         if (Input.GetMouseButtonUp(0))
+        {
             isSelecting = false;
+            // Place the selected units into selection array
+        }
+
+        if(isSelecting)
+        {
+            bool newSelection = false;
+            //Iterate through the units and check if they're in the bounds. If not, make sure they 
+            for( int i = 0; i < units.Count; ++i)
+            {
+                if(IsWithinSelectionBounds(units[i]))
+                {
+                    // Highlight the units
+                    units[i].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
+                    // Reset the index so that the other 
+                    if (!newSelection)
+                    {
+                        newSelection = true;
+                        i = -1;
+                    }
+                }
+                // Only want to deselect other units when actually selecting other units
+                else if(newSelection)
+                {
+                    units[i].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
+                }
+            }
+        }
     }
 
     // For handling GUI events. May be called several times a frame
@@ -138,9 +164,23 @@ public class PlayerUnitController : MonoBehaviour {
         if (isSelecting)
         {
             // Create a rect from both mouse positions
-            var rect = Rectangle.GetScreenRect(mousePosition, Input.mousePosition);
+            var rect = Rectangle.GetScreenRect(startMousePosition, Input.mousePosition);
             Rectangle.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
             Rectangle.DrawScreenRectBorder(rect, 2, Color.green);
         }
+    }
+
+    // Returns true if the unit is within the selection box
+    private bool IsWithinSelectionBounds(GameObject gameObject)
+    {
+        if (!isSelecting)
+        {
+            return false;
+        }
+
+        var camera = Camera.main;
+        var viewportBounds = Rectangle.GetViewportBounds(camera, startMousePosition, Input.mousePosition);
+
+        return viewportBounds.Contains(camera.WorldToViewportPoint(gameObject.transform.position));
     }
 }
