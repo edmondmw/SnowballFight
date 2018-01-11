@@ -42,7 +42,7 @@ public class PlayerUnitController : MonoBehaviour {
         SelectionHandler();
 	}
 
-
+    // Moves selected units
     void MoveHandler()
     {
         if (Input.GetMouseButtonDown(1))
@@ -60,6 +60,7 @@ public class PlayerUnitController : MonoBehaviour {
         }
     }
 
+    // Selected units attack when user hits 'a' and clicks in a direction
     void AttackHandler()
     {
         if(Input.GetKeyDown(KeyCode.A) && Time.time >= nextFire)
@@ -148,7 +149,7 @@ public class PlayerUnitController : MonoBehaviour {
 
         if(isSelecting)
         {
-            //Iterate through the units and check if they're in the bounds. If not, make sure they 
+            //Iterate through the units and check if they're in the bounds. If not, make sure they aren't highlighted
             for( int i = 0; i < units.Count; ++i)
             {
                 if(IsWithinSelectionBounds(units[i]) && units[i].GetComponent<UnitHealth>().isAlive())
@@ -156,11 +157,11 @@ public class PlayerUnitController : MonoBehaviour {
                     if (!selectedIndices.Contains(i))
                     {
                         // Highlight the units
-
                         units[i].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
                         selectedIndices.Add(i);
                     }
 
+                    // If a unit is within bounds, then we want to reset the index so we can deselect any previously selected units prior to this index
                     if (!somethingSelected)
                     {
                         somethingSelected = true;
