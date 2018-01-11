@@ -18,11 +18,6 @@ public class UnitActions : MonoBehaviour {
         nav = GetComponent<NavMeshAgent>();
 	}
 
-    void Update()
-    {
-      
-    }
-
     public void Move(Vector3 point)
     {
         nav.SetDestination(point);

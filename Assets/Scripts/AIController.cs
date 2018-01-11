@@ -31,7 +31,8 @@ public class AIController : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
         ChangeState(currentState);
 	}
 
@@ -45,7 +46,7 @@ public class AIController : MonoBehaviour {
         // Move to a random location
         while (currentState == State.Move)
         {
-            if (!health.active)
+            if (!health.isAlive())
             {
                 StopAllCoroutines();
                 yield return null;
@@ -79,7 +80,7 @@ public class AIController : MonoBehaviour {
             nextFire = Time.time + fireRate + Random.Range(0, 1f);
 
             int randIndex = Random.Range(0, playerUnits.Count);
-            while (!playerUnits[randIndex].GetComponent<UnitHealth>().active)
+            while (!playerUnits[randIndex].GetComponent<UnitHealth>().isAlive())
             {
                 playerUnits.Remove(playerUnits[randIndex]);
                 randIndex = Random.Range(0, playerUnits.Count);

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum Team { green, red };
 
+// Allows the player to interact with/control the units
 public class PlayerUnitController : MonoBehaviour {
     // Should have an array of player controlled units
     public List<GameObject> units = new List<GameObject> ();
@@ -12,35 +13,32 @@ public class PlayerUnitController : MonoBehaviour {
     public Material outlinedMaterial;
     public float fireRate = 0.25f;
 
-    LineRenderer aimLine;
+    List<int> selectedIndices = new List<int>();
+    //LineRenderer aimLine;
     Camera cam;
-    UnitActions actions;
-    UnitHealth health;
-    int selectedIndex = 0;
+    //UnitActions actions;
+    //UnitHealth health;
+    //int selectedIndex = 0;
     bool attackMode = false;
     bool isSelecting = false;
+    bool somethingSelected = false;
     float nextFire;
     Vector3 startMousePosition;
 
     private void Awake()
     {
         cam = Camera.main;
-        actions = units[selectedIndex].GetComponent<UnitActions>();
-        health = units[selectedIndex].GetComponent<UnitHealth>();
-        // Get the selected unit's throw point's line renderer
-        aimLine = units[selectedIndex].GetComponent<LineRenderer>();
-
-        units[selectedIndex].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
+        // Make default selected unit the one at the 0th index
+        selectedIndices.Add(0);
+        units[0].transform.Find("Body").GetComponent<Renderer>().material = outlinedMaterial;
     }
 
 	// Update is called once per frame
 	void Update ()
     {
-        if (health.active)
-        {
-            AttackHandler();
-            MoveHandler();
-        }
+        DeselectDead();
+        AttackHandler();
+        MoveHandler();
         SelectionHandler();
 	}
 
@@ -54,7 +52,10 @@ public class PlayerUnitController : MonoBehaviour {
 
             if (Physics.Raycast(ray, out hit, 100))
             {
-                actions.Move(hit.point);
+                foreach(int index in selectedIndices)
+                {
+                    units[index].GetComponent<UnitActions>().Move(hit.point);
+                }
             }
         }
     }
@@ -70,25 +71,32 @@ public class PlayerUnitController : MonoBehaviour {
         {
             // In Unity, mouse position is measured in x and y, with a z of 0. Since this is an isometric game, in order to get the x and z coordinates
             // of the mouse cursor, you need to use a raycast from the cursor to the ground. The collision point is the (x,z) coordinate of your mouse.
-            aimLine.SetPosition(0, units[selectedIndex].transform.position);
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if(Physics.Raycast(ray, out hit, LayerMask.GetMask("Ground")))
+            foreach (int index in selectedIndices)
             {
-                aimLine.SetPosition(1, hit.point);
-                aimLine.enabled = true;
-            }
-            
-            if (Input.GetMouseButtonDown(0))
-            {
-                actions.Attack(hit.point);
-                attackMode = false;
-                nextFire = Time.time + fireRate;
+                LineRenderer aimLine = units[index].GetComponent<LineRenderer>();
+                aimLine.SetPosition(0, units[index].transform.position);
+                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Ground")))
+                {
+                    aimLine.SetPosition(1, hit.point);
+                    aimLine.enabled = true;
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    units[index].GetComponent<UnitActions>().Attack(hit.point);
+                    attackMode = false;
+                    nextFire = Time.time + fireRate;
+                }
             }
         }
         else
         {
-            aimLine.enabled = false;
+            foreach (int index in selectedIndices)
+            {
+                units[index].GetComponent<LineRenderer>().enabled = false;
+            }
         }
     }
 
@@ -102,58 +110,84 @@ public class PlayerUnitController : MonoBehaviour {
             isSelecting = true;
             startMousePosition = Input.mousePosition;
 
+            // For single click selection
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
                 int newIndex = units.IndexOf(hit.transform.gameObject);
-
                 // Update member variables to the newly selected unit
-                if (newIndex >= 0 && newIndex != selectedIndex && units[newIndex].GetComponent<UnitHealth>().active)
-                {
-                    // Change outlined unit
-                    attackMode = false;
-                    units[selectedIndex].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
-                    units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
-                    actions = units[newIndex].GetComponent<UnitActions>();
-                    health = units[newIndex].GetComponent<UnitHealth>();
-                    aimLine.enabled = false;
-                    aimLine = units[newIndex].GetComponent<LineRenderer>();
-                    // When switching units should be able to fire immediately
+                if (newIndex >= 0  && units[newIndex].GetComponent<UnitHealth>().isAlive())
+                {                    
+                    foreach(int index in selectedIndices)
+                    {
+                        if (index != newIndex)
+                        {
+                            units[index].GetComponent<LineRenderer>().enabled = false;
+                            units[index].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
+                        }
+                    }
+                    // TODO: might need to change this
+                    // When switching units should be able to fire immediately 
                     nextFire = Time.time;
-                    selectedIndex = newIndex;
+                    attackMode = false;
+                    units[newIndex].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
+                    selectedIndices.Clear();
+                    selectedIndices.Add(newIndex);
                 }
             }
         }
+
+        // For drag selection
         // If we let go of the left mouse button, end selection
         if (Input.GetMouseButtonUp(0))
         {
             isSelecting = false;
-            // Place the selected units into selection array
+            somethingSelected = false;
         }
 
         if(isSelecting)
         {
-            bool newSelection = false;
             //Iterate through the units and check if they're in the bounds. If not, make sure they 
             for( int i = 0; i < units.Count; ++i)
             {
-                if(IsWithinSelectionBounds(units[i]))
+                if(IsWithinSelectionBounds(units[i]) && units[i].GetComponent<UnitHealth>().isAlive())
                 {
-                    // Highlight the units
-                    units[i].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
-                    // Reset the index so that the other 
-                    if (!newSelection)
+                    if (!selectedIndices.Contains(i))
                     {
-                        newSelection = true;
+                        // Highlight the units
+
+                        units[i].transform.GetChild(0).GetComponent<Renderer>().material = outlinedMaterial;
+                        selectedIndices.Add(i);
+                    }
+
+                    if (!somethingSelected)
+                    {
+                        somethingSelected = true;
                         i = -1;
                     }
                 }
                 // Only want to deselect other units when actually selecting other units
-                else if(newSelection)
+                else if(somethingSelected)
                 {
                     units[i].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
+                    selectedIndices.Remove(i);
                 }
+            }
+        }
+    }
+
+    // If any units have been killed deselect them
+    private void DeselectDead()
+    {
+        foreach(int index in selectedIndices)
+        {
+            if(!units[index].GetComponent<UnitHealth>().isAlive())
+            {
+                units[index].transform.GetChild(0).GetComponent<Renderer>().material = originalMaterial;
+                units[index].GetComponent<LineRenderer>().enabled = false;
+                selectedIndices.Remove(index);
+                
             }
         }
     }
