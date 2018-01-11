@@ -6,26 +6,18 @@ using UnityEngine.AI;
 public class UnitHealth : MonoBehaviour {
     int maxHealth = 3;
     public int currentHealth = 3;
-    public bool active = true;
     public GameObject frontHealth;
     public GameObject backHealth;
-
-    private void Start()
-    {
-    }
-
 
     private void Update()
     {
         // Lay down if dead
-        if(!active)
+        if(!isAlive())
         {
             Vector3 temp = transform.rotation.eulerAngles;
             temp.x = 90.0f;
             transform.rotation = Quaternion.Euler(temp);
         }
-
-        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -33,6 +25,7 @@ public class UnitHealth : MonoBehaviour {
         
         if (collision.gameObject.CompareTag("Snowball"))
         {
+            Destroy(collision.gameObject);
 
             if (currentHealth > 0)
             {
@@ -49,13 +42,11 @@ public class UnitHealth : MonoBehaviour {
                 backHealth.transform.localScale = updatedHealthSize;
                 backHealth.transform.localPosition = updatedBackHealthPosition;
             }
+        }   
+    }
 
-            if (currentHealth <= 0)
-            {
-                active = false;
-            }
-        }
-
-        
+    public bool isAlive()
+    {
+        return currentHealth > 0;
     }
 }
